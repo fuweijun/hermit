@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Hermit</string>
+    <string name="accessbilityDesc">不开启则无法获得页面信息，无法进行定位等操作。</string>
+</resources>

@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="Gradle: com.yanzhenjie.andserver:api:2.1.7@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/4f45235a2dd4d100975b8f46d5e7c818/jetified-api-2.1.7/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3d76796054fc31cc682b0380820d1667/jetified-api-2.1.7/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3d76796054fc31cc682b0380820d1667/jetified-api-2.1.7/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/3d76796054fc31cc682b0380820d1667/jetified-api-2.1.7/res" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.yanzhenjie.andserver/api/2.1.7/32df501a3435c7c66a71a11ddbac058cb9a0b5bd/api-2.1.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.yanzhenjie.andserver/api/2.1.7/bda76a5d9ea8bbacf1366af5d5c3698df979b666/api-2.1.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
