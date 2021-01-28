@@ -27,8 +27,8 @@ adb forward tcp:9999 tcp:9999
 https://github.com/LookCos/hermit-py  **从 release中下载对应的python包，进行操作。**
 
 
-# 具体的接口信息如下  
-## 一、获取实时界面布局信息  
+### 具体的接口信息如下  
+#### 一、获取实时界面布局信息  
 
 |路径|方式|是否需要root|说明|
 |:-----  |:-----|-----  |-----  |
@@ -71,7 +71,7 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 
 - data的每个item中 resource-id、content-desc、text较为重要，可以作为点击来源。
 
-## 二、点击与滑动  
+#### 二、点击与滑动  
 
 - 无障碍的方式  
 
@@ -94,7 +94,7 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 |/shell/swipe|GET   |是|通过 坐标滑动  |
 需要四个参数 `x1`, `y1`, `x2`, `y2`，对应的操作是从坐标 (x1, y1)滑动到(x2, y2)  
 
-## 三、剪切板与模拟输入  
+#### 三、剪切板与模拟输入  
 
 |路径|方式|是否需要root|说明|
 |:-----  |:-----|-----  |-----  |
@@ -112,7 +112,7 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 
 例如 /input?by=text&obj=搜索&text=张三 ，则会自动寻找`text=搜索`的控件，并在其中输入 `张三`
 
-## 四、全局操作  
+#### 四、全局操作  
 
 |路径|方式|是否需要root|
 |:-----  |:-----|-----  |
@@ -134,7 +134,7 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 
 
 
-### 五、一些有用的 api
+#### 五、一些有用的 api
 - 检查root权限  
 
 |路径|方式|说明|
