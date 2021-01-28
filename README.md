@@ -106,10 +106,10 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 
 
 |字段|类型|空|默认|注释|  
-|:----    |:-------    |:--- |-- -|------      |  
-|by   |str     |否 |  |  通过何种方式选择输入框控件, 可选 text、id、desc      |  
-|obj |str |否 |    |   对应选择控件方式的对应值  |  
-|text |str |否   |    |   要设置的输入框内容   |  
+|:----    |:-------    |:---|------      |  
+|by   |str     |否 |    通过何种方式选择输入框控件, 可选 text、id、desc      |  
+|obj |str |否 |      对应选择控件方式的对应值  |  
+|text |str |否   |     要设置的输入框内容   |  
 
 例如 /input?by=text&obj=搜索&text=张三 ，则会自动寻找`text=搜索`的控件，并在其中输入 `张三`
 
