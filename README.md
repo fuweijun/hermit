@@ -140,6 +140,8 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 |路径|方式|说明|
 |:-----  |:-----|-----  |-----  |
 |/check/root |GET   |检查root权限  |
+
+
 - 发送一个keyevent
 
 |路径|方式|是否需要root|说明|
