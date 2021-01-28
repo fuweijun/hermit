@@ -105,7 +105,7 @@ https://github.com/LookCos/hermit-py  **从 release中下载对应的python包�
 模拟输入需要三个参数
 
 
-|字段|类型|空|默认|注释|  
+|字段|类型|默认|注释|  
 |:----    |:-------    |:---|------      |  
 |by   |str     |否 |    通过何种方式选择输入框控件, 可选 text、id、desc      |  
 |obj |str |否 |      对应选择控件方式的对应值  |  
