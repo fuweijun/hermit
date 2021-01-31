@@ -10,15 +10,20 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private static ClipboardManager cm;
     private static Context context;
+    private static int dwidth;
+    private static int dheight;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +33,12 @@ public class MainActivity extends AppCompatActivity {
         sm.startServer();
         context = this;
         cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-
+        // 申请 存储权限与无障碍权限
+        boolean isGrantExternalRW = Utils.isGrantExternalRW(this, 1);
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getRealMetrics(dm);
+        dwidth = dm.widthPixels;
+        dheight = dm.heightPixels;
     }
 
     /*
@@ -47,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+
     }
 
     public static Context getContext() {
@@ -62,17 +73,17 @@ public class MainActivity extends AppCompatActivity {
         }
         return content;
     }
-    public static int getScreenHeight(){
-        return getContext().getResources().getDisplayMetrics().heightPixels;
-    }
-
-    public static int getScreenWidth(){
-        return getContext().getResources().getDisplayMetrics().widthPixels;
-    }
 
     public static void setCliBoardText(String text){
         ClipData data = ClipData.newPlainText("text", text);
         cm.setPrimaryClip(data);
         return ;
+    }
+    public static int getScreenHeight(){
+        return dheight;
+    }
+
+    public static int getScreenWidth(){
+        return dwidth;
     }
 }

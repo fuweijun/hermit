@@ -288,7 +288,7 @@ public class Router {
     public FileBody imgScreen() {
         ShellUtils.execCommand("screencap -p /sdcard/Pictures/hermit.png", true);
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        File file = new File(path, "hermit.png");
+        File file = new File("/storage/emulated/0/Pictures", "hermit.png");
         FileBody body = new FileBody(file);
         return body;
     }

@@ -39,9 +39,10 @@
     if (!scaling) {
       var scaling = 0.5;
     }
+    var screenData = JSON.parse(httpGet("/data/screen"))["data"];
     var screen = {
-      width: 810 * scaling,
-      height: 1440 * scaling,
+      width: screenData.width * scaling,
+      height: screenData.height * scaling,
     };
     var c1;
 
@@ -66,6 +67,7 @@
     // 添加监听事件
     c.addEventListener("click", function () {
       let curr = getPointOnCanvas(c, event.pageX, event.pageY);
+      console.log(curr);
       let temp_data = [];
       let min = 0,
         score = 0x99999;
@@ -82,6 +84,7 @@
         }
       }
       let _area = data[min]["area"];
+      console.log(data[min]);
       ctx.putImageData(c1, 0, 0);
       ctx.fillStyle = "#72c04ea8";
       ctx.fillRect(_area.left, _area.top, _area.width, _area.height);
@@ -122,6 +125,8 @@
       };
       bounds.width = bounds.right - bounds.left;
       bounds.height = bounds.bottom - bounds.top;
+      console.log(s);
+      console.log(bounds);
       return bounds;
     }
 
@@ -129,8 +134,8 @@
     function getPointOnCanvas(canvas, x, y) {
       var bbox = canvas.getBoundingClientRect();
       return {
-        x: parseInt(x - bbox.left * (canvas.width / bbox.width)),
-        y: parseInt(y - bbox.top * (canvas.height / bbox.height)),
+        x: x - bbox.left * (canvas.width / bbox.width),
+        y: y - bbox.top * (canvas.height / bbox.height),
       };
     }
     function getQueryVariable(variable) {
