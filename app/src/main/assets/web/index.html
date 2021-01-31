@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>布局范围分析 - Hermit</title>
+    <link type="text/css" rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="box">
+      <div class="item" id="canvas">画布加载中......</div>
+      <div class="item">
+        <table class="pure-table pure-table-horizontal">
+          <thead>
+            <tr>
+              <th>key</th>
+              <th>value</th>
+            </tr>
+          </thead>
+          <tbody id="nodes">
+            <tr>
+              <td>尝试点击一下矩形</td>
+              <td>对应节点信息</td>
+            </tr>
+            <tr>
+              <td>喜欢的话</td>
+              <td>就点颗star吧</td>
+            </tr>
+            <tr>
+              <td>项目地址</td>
+              <td><a target="_blank" href="https://github.com/LookCos/hermit">https://github.com/LookCos/hermit</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript">
+    var scaling = getQueryVariable("s");
+    if (!scaling) {
+      var scaling = 0.5;
+    }
+    var screen = {
+      width: 810 * scaling,
+      height: 1440 * scaling,
+    };
+    var c1;
+
+    var canvas = document.getElementById("canvas");
+    canvas.innerHTML = '<canvas id="myCanvas" width="' + screen.width + '" height="' + screen.height + '" style="border: 1px solid #d3d3d3"></canvas>';
+
+    // 初始化画布
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+
+    // 初始化图片
+    var img = new Image();
+    img.src = "/img/screen";
+    // img.src = "screen.png";
+    // 解析data中的bounds
+    var data = JSON.parse(httpGet("/data/nodes"))["data"];
+    data.forEach((elem) => {
+      var area = matchBounds(elem["bounds"]);
+      elem["area"] = area;
+    });
+
+    // 添加监听事件
+    c.addEventListener("click", function () {
+      let curr = getPointOnCanvas(c, event.pageX, event.pageY);
+      let temp_data = [];
+      let min = 0,
+        score = 0x99999;
+
+      // 找到点击了哪一条数据
+      for (var i = 0, len = data.length; i < len; i++) {
+        let _area = data[i]["area"];
+        if (_area.left < curr.x && curr.x < _area.right && _area.top < curr.y && curr.y < _area.bottom) {
+          let _score = _area.right - _area.left + _area.bottom - _area.top;
+          if (_score < score) {
+            score = _score;
+            min = i;
+          }
+        }
+      }
+      let _area = data[min]["area"];
+      ctx.putImageData(c1, 0, 0);
+      ctx.fillStyle = "#72c04ea8";
+      ctx.fillRect(_area.left, _area.top, _area.width, _area.height);
+
+      var nodeString = "";
+      for (var key in data[min]) {
+        if (key !== "area") {
+          nodeString += "<tr><td>" + key + "</td><td>" + data[min][key] + "</td></tr>";
+        }
+      }
+      let nodeInfo = document.getElementById("nodes");
+      nodeInfo.innerHTML = nodeString;
+    });
+
+    img.onload = function () {
+      // 将图片放上去
+      ctx.drawImage(img, 0, 0, (width = screen.width), (height = screen.height));
+      // 设置线条颜色
+      ctx.strokeStyle = "green";
+      // 遍历数据，解析bounds并作图
+      data.forEach((element) => {
+        var area = element["area"];
+        ctx.strokeRect(area.left, area.top, area.width, area.height);
+      });
+      c1 = ctx.getImageData(0, 0, (width = screen.width), (height = screen.height));
+    };
+
+    // 正则匹配Bounds
+    function matchBounds(s) {
+      // let reg = /\((\d+), (\d+)[^0-9]+(\d+), (\d+)\)/m;
+      let reg = /([-\d+|\d]+)[^-\d]+([-\d+|\d]+) - ([-\d+|\d]+)[^-\d]+([-\d+|\d]+)\)/m;
+      r = s.match(reg);
+      let bounds = {
+        left: r[1] * scaling,
+        top: r[2] * scaling,
+        right: r[3] * scaling,
+        bottom: r[4] * scaling,
+      };
+      bounds.width = bounds.right - bounds.left;
+      bounds.height = bounds.bottom - bounds.top;
+      return bounds;
+    }
+
+    // 获取在鼠标在画布中的位置
+    function getPointOnCanvas(canvas, x, y) {
+      var bbox = canvas.getBoundingClientRect();
+      return {
+        x: parseInt(x - bbox.left * (canvas.width / bbox.width)),
+        y: parseInt(y - bbox.top * (canvas.height / bbox.height)),
+      };
+    }
+    function getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return pair[1];
+        }
+      }
+      return false;
+    }
+
+    function httpGet(theUrl) {
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET", theUrl, false); // false for synchronous request
+      xmlHttp.send(null);
+      return xmlHttp.responseText;
+    }
+  </script>
+</html>

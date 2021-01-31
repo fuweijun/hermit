@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         sm.startServer();
         context = this;
         cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
     }
 
     /*
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return content;
     }
-
     public static int getScreenHeight(){
         return getContext().getResources().getDisplayMetrics().heightPixels;
     }

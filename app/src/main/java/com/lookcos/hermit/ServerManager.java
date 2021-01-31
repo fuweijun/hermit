@@ -17,7 +17,6 @@ public class ServerManager {
      * Create server.
      */
     public ServerManager(Context context) {
-
         mServer = AndServer.webServer(context)
                 .port(9999)
                 .timeout(10, TimeUnit.SECONDS)
@@ -65,4 +64,3 @@ public class ServerManager {
         }
     }
 }
-

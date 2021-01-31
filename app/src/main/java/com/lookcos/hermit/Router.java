@@ -2,6 +2,7 @@ package com.lookcos.hermit;
 
 
 import android.os.Build;
+import android.os.Environment;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import androidx.annotation.RequiresApi;
@@ -9,17 +10,17 @@ import androidx.annotation.RequiresApi;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONException;
 
+import com.yanzhenjie.andserver.annotation.Controller;
 import com.yanzhenjie.andserver.annotation.GetMapping;
 import com.yanzhenjie.andserver.annotation.PutMapping;
 import com.yanzhenjie.andserver.annotation.RequestParam;
 import com.yanzhenjie.andserver.annotation.RestController;
 import com.yanzhenjie.andserver.framework.body.FileBody;
-import com.yanzhenjie.andserver.http.HttpResponse;
+import com.yanzhenjie.andserver.framework.website.AssetsWebsite;
 
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -282,14 +283,27 @@ public class Router {
         result.put("data", screenInfo);
         return result.toString();
     }
-    /*
-    不会写，我连个图片都返回不成功，你来帮我写吧
-    @GetMapping("/welcome")
-    public FileBody redi(HttpResponse response) throws URISyntaxException {
-        // File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        // File file = new File(path, "1.png");
-        File file = new File(new URI("file:///android_asset/takung.jpg"));
-        response.setBody(new FileBody(file));
-        // return new FileBody(file);
-    }*/
+
+    @GetMapping("/img/screen")
+    public FileBody imgScreen() {
+        ShellUtils.execCommand("screencap -p /sdcard/Pictures/hermit.png", true);
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        File file = new File(path, "hermit.png");
+        FileBody body = new FileBody(file);
+        return body;
+    }
+    @GetMapping("/tap")
+    public String info() throws IOException {
+       Utils.tapTest();
+       return "ok";
+    }
+}
+@Controller
+class PageController {
+
+    @GetMapping(path = "/viewer")
+    public String index() {
+        // Equivalent to [return "/index"].
+        return "forward:/index.html";
+    }
 }
