@@ -136,6 +136,27 @@ public class Router {
         }
         return result.toString();
     }
+    
+    @GetMapping("/shell/longtap")
+    String inputTap(@RequestParam("x") String x, @RequestParam("y") String y, @RequestParam("duration") String duration) throws JSONException {
+        /*
+        * 长按操作
+        * @param：x,y坐标值
+        * @param: duration 长按持续时间 单位ms
+        * */
+        String command = "input swipe " + x + " " + y + " " + x + " " + y + " " + duration;
+        ShellUtils.CommandResult shellResult = ShellUtils.execCommand(command, true);
+        JSONObject result = new JSONObject();
+        if(shellResult.result==0){
+            result.put("code", 0);
+            result.put("msg", "ok");
+        }else {
+            result.put("code", -1);
+            result.put("msg", shellResult.errorMsg);
+        }
+        return result.toString();
+    }
+    
     @GetMapping("/shell/swipe")
     String inputSwipe(@RequestParam("x1") String x1,
                       @RequestParam("y1") String y1,
