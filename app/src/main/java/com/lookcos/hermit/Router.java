@@ -138,7 +138,7 @@ public class Router {
     }
     
     @GetMapping("/shell/longtap")
-    String inputTap(@RequestParam("x") String x, @RequestParam("y") String y, @RequestParam("duration") String duration) throws JSONException {
+    String inputLongTap(@RequestParam("x") String x, @RequestParam("y") String y, @RequestParam("duration") String duration) throws JSONException {
         /*
         * 长按操作
         * @param：x,y坐标值
