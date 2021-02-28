@@ -3,11 +3,24 @@ package com.lookcos.hermit;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.DisplayMetrics;
+import android.os.Environment;
+import android.os.StatFs;
+import android.text.format.Formatter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /*
 * 或许这里可以写上一句话
@@ -62,5 +75,182 @@ public class Utils {
         //说明已经授权
         return true;
     }
-
+    /**
+     * 获取某个目录下最新文件
+     *
+     * @param path
+     * @return
+     */
+    public static File getLastFile(String path) {
+        List<File> list = getFiles(path, new ArrayList<>());
+        if (list != null && list.size() > 0) {
+            Collections.sort(list, (file, newFile) -> {
+                if (file.lastModified() < newFile.lastModified()) {
+                    return -1;
+                } else if (file.lastModified() == newFile.lastModified()) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            });
+        }
+        return list.get(list.size() - 1);
+    }
+    /**
+     *
+     * 获取目录下所有文件
+     *
+     * @param realpath
+     * @param files
+     * @return
+     */
+    public static List<File> getFiles(String realpath, List<File> files) {
+        File realFile = new File(realpath);
+        if (realFile.isDirectory()) {
+            File[] subfiles = realFile.listFiles();
+            for (File file : subfiles) {
+                if (file.isDirectory()) {
+                    getFiles(file.getAbsolutePath(), files);
+                } else {
+                    files.add(file);
+                }
+            }
+        }
+        return files;
+    }
 }
+
+class SystemUtil {
+
+    // 获取当前手机系统语言。
+    public static String getSystemLanguage() {
+        return Locale.getDefault().getLanguage();
+    }
+
+    // 获取当前手机系统版本号
+    public static String getSystemVersion() {
+        return android.os.Build.VERSION.RELEASE;
+    }
+
+    // 获取手机型号
+    public static String getSystemModel() {
+        return android.os.Build.MODEL;
+    }
+
+    // 获取手机厂商
+    public static String getDeviceBrand() {
+        return android.os.Build.BRAND;
+    }
+    // 获取总内存大小
+    public static String getTotalRAM() {
+        long size = 0;
+        Context context = MainActivity.getContext();
+        ActivityManager activityManager = (ActivityManager) context
+                .getSystemService(context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(outInfo);
+        size = outInfo.totalMem;
+        return Formatter.formatFileSize(context, size);
+    }
+    // 获取可用内存大小
+    public static String getAvailableRAM() {
+        Context context = MainActivity.getContext();
+        long size = 0;
+        ActivityManager activityManager = (ActivityManager) context
+                .getSystemService(context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
+        activityManager.getMemoryInfo(outInfo);
+        size = outInfo.availMem;
+
+        return Formatter.formatFileSize(context, size);
+    }
+
+    // 获取存储相关信息
+    public static float[] getSDCardMemory() {
+        float[] sdCardInfo=new float[2];
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File sdcardDir = Environment.getExternalStorageDirectory();
+            StatFs sf = new StatFs(sdcardDir.getPath());
+            float bSize = sf.getBlockSize();
+            float bCount = sf.getBlockCount();
+            float availBlocks = sf.getAvailableBlocks();
+            sdCardInfo[0] = bSize * bCount;//总大小
+            sdCardInfo[1] = bSize * availBlocks;//可用大小
+        }
+        return sdCardInfo;
+    }
+    // 获取CPU 最大频率
+    public static String getMaxCpuFreq() {
+        String result = "0";
+        ProcessBuilder cmd;
+        try {
+            String[] args = { "/system/bin/cat", "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq" };
+            cmd = new ProcessBuilder(args);
+            Process process = cmd.start();
+            InputStream in = process.getInputStream();
+            byte[] re = new byte[24];
+            while (in.read(re) != -1) {
+                result = result + new String(re);
+            }
+            in.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            result = "0";
+        }
+        return result.trim();
+    }
+    // 获取CPU最小频率（单位KHZ）
+    public static String getMinCpuFreq() {
+        String result = "0";
+        ProcessBuilder cmd;
+        try {
+            String[] args = { "/system/bin/cat", "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq" };
+            cmd = new ProcessBuilder(args);
+            Process process = cmd.start();
+            InputStream in = process.getInputStream();
+            byte[] re = new byte[24];
+            while (in.read(re) != -1) {
+                result = result + new String(re);
+            }
+            in.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            result = "0";
+        }
+        return result.trim();
+    }
+    // 实时获取CPU当前频率（单位KHZ）
+    public static String getCurCpuFreq() {
+        String result = "0";
+        try {
+            FileReader fr = new FileReader("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+            BufferedReader br = new BufferedReader(fr);
+            String text = br.readLine();
+            result = text.trim();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    // 获取CPU名字
+    public static String getCpuName() {
+        try {
+            FileReader fr = new FileReader("/proc/cpuinfo");
+            BufferedReader br = new BufferedReader(fr);
+            String text = br.readLine();
+            String[] array = text.split(":\\s+", 2);
+            for (int i = 0; i < array.length; i++) {
+            }
+            return array[1];
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}
+

@@ -35,10 +35,27 @@
     </div>
   </body>
   <script type="text/javascript">
+    
+    /*
+    scaling： 
+      缩放参数：默认0.4倍
+    screenDelay：
+      无障碍截图延迟时间：默认500ms,如果性能较差，建议延长
+    useRoot:
+      是否使用Root的方式截图，0=False, 1=True
+    */
     var scaling = getQueryVariable("s");
-    if (!scaling) {
-      var scaling = 0.5;
-    }
+    var screenDelay = getQueryVariable("t");
+    var useRoot = getQueryVariable("useRoot");
+    if (!scaling) {var scaling = 0.4};
+    if (!screenDelay) {var screenDelay = 500};
+    if (!useRoot) {var useRoot = 0};
+
+    // 设置截图使用的路由
+    var screenRouter = '/image/screen?t=' + screenDelay; 
+    if(useRoot==1){screenRouter = '/shell/image/screen'};
+
+    // 获取屏幕长宽信息
     var screenData = JSON.parse(httpGet("/data/screen"))["data"];
     var screen = {
       width: screenData.width * scaling,
@@ -55,7 +72,7 @@
 
     // 初始化图片
     var img = new Image();
-    img.src = "/img/screen";
+    img.src = screenRouter;
     // img.src = "screen.png";
     // 解析data中的bounds
     var data = JSON.parse(httpGet("/data/nodes"))["data"];
@@ -138,6 +155,7 @@
         y: y - bbox.top * (canvas.height / bbox.height),
       };
     }
+    
     function getQueryVariable(variable) {
       var query = window.location.search.substring(1);
       var vars = query.split("&");

@@ -11,11 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ServerManager sm = new ServerManager(this);
         sm.startServer();
+
         context = this;
         cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         // 申请 存储权限与无障碍权限
