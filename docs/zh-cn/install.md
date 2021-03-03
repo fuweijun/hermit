@@ -1,16 +1,16 @@
-### 安装与简单设置  
+#### 下载与安装  
+Github release [https://github.com/LookCos/hermit/releases](https://github.com/LookCos/hermit/releases)  
+蓝奏云 [https://wwi.lanzous.com/ipGqYmg1z0j](https://wwi.lanzous.com/ipGqYmg1z0j)
 
-**通过对restful API的操作，可以转化为对手机的操作**。  
-因此，我们首先要搞清楚API的地址，然后加上运行端口`9999`，即可访问。 
-
-#### 1. 安卓设备与电脑处于同一局域网:  
+#### 简单设置  
+##### 1. 安卓设备与电脑处于同一局域网:  
 API的地址就是安卓设备在局域网中的地址，例如 `192.168.1.115`。  
 此时我们打开浏览器输入`http://192.168.1.115:9999/`，当看到如下内容就说明运行成功,可以使用py-hermit或调用API来操作安卓设备了。
 ```json
 {"code":0,"msg":"Hermit is ok!"}
 ```
 
-#### 2. 模拟器用户。  
+##### 2. 模拟器用户。  
 需要做一次端口映射，打开终端执行如下操作：   
 ```bash
 # 通过adb 连接模拟器 （根据模拟器不同，注意端口有所不同，常见的有7555，5555）

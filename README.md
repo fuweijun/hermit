@@ -1,11 +1,11 @@
 
-目前该软件已经更新，但是对应的py-hermit还没有更新，文档尚未上线。就这两天了，敬请期待。  
+文档地址：[https://www.lookcos.cn/docs/hermit](https://www.lookcos.cn/docs/hermit)
 
 ### Hermit简介
 
 Hermit，是一款用于Android自动化测试的软件，运行于安卓，**通过接收restful API请求，进而转化为对设备的操作。**  
 支持快速的点击、滑动、读取与设置剪切板（支持中文）、模拟输入、寻找控件并点击等一系列操作，支持可视化布局分析。  
-仅有2.78 Mib。
+大小不到 3Mib，默认运行端口`9999`。
 
 
 #### 基于无障碍的功能   
@@ -43,7 +43,7 @@ Hermit，是一款用于Android自动化测试的软件，运行于安卓，**�
 
 #### 可交互的布局可视化分析功能      
 类似Android Studio的LayoutInspector，可以分析界面层次和范围、获取界面上的控件信息，进而方便点击、滑动等操作。  
-可通过鼠标点选控件（详情见[布局分析说明]），查看对应信息:  
+可通过鼠标点选控件（详情见[布局分析说明](/zh-cn/uiautomator)），查看对应信息:  
 1. bounds （可点击范围）
 2. boundsInParent
 3. checked
