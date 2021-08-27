@@ -1,6 +1,7 @@
 
 文档地址：[https://www.lookcos.cn/docs/hermit](https://www.lookcos.cn/docs/hermit)
 
+由于不是专业Android开发，布局分析开发遇到瓶颈了。但是目前体积小巧，操作类功能也够用了。谢谢各位支持，以后应该还会更新。
 ### Hermit简介
 
 Hermit，是一款用于Android自动化测试的软件，运行于安卓，**通过接收restful API请求，进而转化为对设备的操作。**  
