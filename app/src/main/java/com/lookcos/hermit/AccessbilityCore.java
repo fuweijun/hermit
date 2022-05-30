@@ -1,10 +1,24 @@
 package com.lookcos.hermit;
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
+import android.media.Image;
+import android.media.ImageReader;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.DisplayMetrics;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -40,6 +54,11 @@ public class AccessbilityCore extends AccessibilityService {
     String regexId = ".*boundsInParent: Rect(.*?); boundsInScreen: Rect(.*?); .*";
     Pattern rID = Pattern.compile(regexId);
 
+
+    public static int result;
+    public static Intent intentData;
+    public static MediaProjectionManager mMediaProjectionManager;
+    private static Handler handler = new Handler(Looper.myLooper());
     JSONArray nodes = new JSONArray();
     public static JSONArray newNodes = new JSONArray();
 
@@ -90,27 +109,69 @@ public class AccessbilityCore extends AccessibilityService {
         return ;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    public static void ScreenShotByAB(){
+    /**
+     * 屏幕截图
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static void ScreenShotByAB() {
+        MainActivity activity = (MainActivity) MainActivity.context;
+        if (mMediaProjectionManager == null) {
+            mMediaProjectionManager =
+                (MediaProjectionManager) activity.getApplication().getSystemService(
+                    Context.MEDIA_PROJECTION_SERVICE);
+            activity.startActivityForResult(mMediaProjectionManager.createScreenCaptureIntent(), 200);
+        } else {
+            generatorPicture(activity, result, intentData);
+        }
+    }
 
-        mAccessibilityService.takeScreenshot(DEFAULT_DISPLAY, MainActivity.getContext().getMainExecutor(), new TakeScreenshotCallback() {
-            @Override
-            public void onSuccess(@NonNull ScreenshotResult screenshot) {
-                Bitmap bitmap = Bitmap.wrapHardwareBuffer(screenshot.getHardwareBuffer(), screenshot.getColorSpace());
-                File file = new File("/storage/emulated/0/Pictures", "HermitScreenShot.jpg");
-                try {
-                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
-                    bos.flush();
-                    bos.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static void generatorPicture(Activity activity, int resultCode, Intent data) {
+        MediaProjection mMediaProjection =
+            mMediaProjectionManager.getMediaProjection(resultCode, data);
+        Resources resources = activity.getResources();
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        int density = dm.densityDpi;
+        int screenWidth = dm.widthPixels;
+        int screenHeight = dm.heightPixels;
+        ImageReader mImageReader =
+            ImageReader.newInstance(screenWidth, screenHeight, 0x1,
+                2);
+        VirtualDisplay mVirtualDisplay =
+            mMediaProjection.createVirtualDisplay("screen-mirror",
+                screenWidth, screenHeight, density,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                mImageReader.getSurface(), null, null);
+
+        String filepath = "/storage/emulated/0/Pictures/HermitScreenShot.jpg";
+        mImageReader.setOnImageAvailableListener((ImageReader.OnImageAvailableListener) reader -> {
+            try {
+                Image image = reader.acquireLatestImage();
+                int width = image.getWidth();
+                int height = image.getHeight();
+                final Image.Plane[] planes = image.getPlanes();
+                final ByteBuffer buffer = planes[0].getBuffer();
+                int pixelStride = planes[0].getPixelStride();
+                int rowStride = planes[0].getRowStride();
+                int rowPadding = rowStride - pixelStride * width;
+                Bitmap bitmap = Bitmap.createBitmap(width + rowPadding / pixelStride, height,
+                    Bitmap.Config.ARGB_8888);
+                bitmap.copyPixelsFromBuffer(buffer);
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+                image.close();
+                if (mVirtualDisplay != null) {
+                    mVirtualDisplay.release();
                 }
+                //保存图片
+                FileOutputStream fos = new FileOutputStream(filepath);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.flush();
+                fos.close();
+            } catch (Exception e) {
+                Log.e("generatorPicture", "Exception e : " + e);
             }
-            @Override
-            public void onFailure(int errorCode) {
-            }
-        });
+        }, handler);
+
     }
 
     /**

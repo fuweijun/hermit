@@ -1,5 +1,6 @@
 package com.lookcos.hermit;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +18,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     private static ClipboardManager cm;
-    private static Context context;
+    public static Context context;
     private static int dwidth;
     private static int dheight;
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -82,5 +83,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static int getScreenWidth(){
         return dwidth;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 200) {
+            AccessbilityCore.result = resultCode;
+            AccessbilityCore.intentData = data;
+        }
     }
 }
