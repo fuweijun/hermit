@@ -413,14 +413,18 @@ public class Router {
         return body;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     @GetMapping("/image/screen")
-    public FileBody imgScreen(@RequestParam(value = "t", defaultValue = "500", required = false) int t) {
+    public FileBody imgScreen(@RequestParam(value = "t", defaultValue = "3000", required = false) int t) {
         // 推荐Android 7及以上的用此接口
         // 发送截屏指令
-        System.out.println(t);
+        System.out.println("imgScreen t : " + t);
         try {
-            AccessbilityCore.ScreenShotByAB();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                AccessbilityCore.ScreenShotByAB();
+            }
+            if(t < 3000) {
+                t = 3000;
+            }
             Thread.sleep(t);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
